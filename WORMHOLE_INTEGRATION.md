@@ -2,22 +2,22 @@
 
 > **Automated cross-chain payroll with native USDC transfers powered by Wormhole**
 
+## 🔑 Key Information
+
+### Contract Addresses (Base Sepolia Testnet)
+```bash
+# Set these variables for all commands below
+export USDC_ADDRESS=0x036CbD53842c5426634e7929541eC2318f3dCF7e
+export WORMHOLE_BRIDGE=0x2703483B1a5a7c577e8680de9Df8Be03c6f30e3c
+export LINKPAY_ADDRESS=0xe7335Ee6af0bE5288daeC898Cf74D51D3eE92A2e
+```
+
 ## Overview
 
 LinkPay has been enhanced with **Wormhole CCTP (Cross-Chain Transfer Protocol)** integration, enabling native USDC transfers across multiple blockchain networks without wrapped tokens. This integration provides an alternative to Chainlink CCIP using Wormhole's burn-and-mint mechanism for superior cross-chain payroll automation.
 
 ### Quick Links
-- **🔧 Developer Guide**: [CLAUDE.md](./CLAUDE.md) - Project documentation and workflow
 - **📦 Makefile Commands**: See README.md for complete setup and build commands
-
-## 🔑 Key Information
-
-### Contract Addresses (Base Sepolia Testnet)
-```
-USDC:                     0x036CbD53842c5426634e7929541eC2318f3dCF7e
-Wormhole CircleIntegration: 0x2703483B1a5a7c577e8680de9Df8Be03c6f30e3c
-LinkPayWormhole:          [TO BE DEPLOYED]
-```
 
 ### Supported Networks
 | Network | Wormhole Chain ID | Network ID |
@@ -83,50 +83,34 @@ forge script script/DeployLinkPayWormhole.s.sol:DeployLinkPayWormhole \
 ### Step 4: Test Cross-Chain Payment
 
 ```bash
-# Set contract addresses
-USDC_ADDRESS=0x036CbD53842c5426634e7929541eC2318f3dCF7e
-LINKPAY_ADDRESS=YOUR_DEPLOYED_CONTRACT_ADDRESS
+# Load environment variables (includes addresses set above)
+source .env
 
-# 1. Approve USDC for registration (10 USDC)
+# 1. Approve USDC for registration fee
 cast send $USDC_ADDRESS \
-  "approve(address,uint256)" \
-  $LINKPAY_ADDRESS \
-  10000000 \
-  --private-key $PRIVATE_KEY \
-  --rpc-url $BASE_SEPOLIA_RPC_URL
+  "approve(address,uint256)" $LINKPAY_ADDRESS 10000000 \
+  --private-key $PRIVATE_KEY --rpc-url $BASE_SEPOLIA_RPC_URL
 
 # 2. Register company
 cast send $LINKPAY_ADDRESS \
-  "registerCompany(string)" \
-  "My Test Company" \
-  --private-key $PRIVATE_KEY \
-  --rpc-url $BASE_SEPOLIA_RPC_URL
+  "registerCompany(string)" "My Test Company" \
+  --private-key $PRIVATE_KEY --rpc-url $BASE_SEPOLIA_RPC_URL
 
 # 3. Add employee on Arbitrum Sepolia
 cast send $LINKPAY_ADDRESS \
   "addEmployee(string,address,uint16,uint256)" \
-  "Alice" \
-  0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb \
-  10003 \
-  1000000000 \
-  --private-key $PRIVATE_KEY \
-  --rpc-url $BASE_SEPOLIA_RPC_URL
+  "Alice" 0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb 10003 1000000 \
+  --private-key $PRIVATE_KEY --rpc-url $BASE_SEPOLIA_RPC_URL
 
 # 4. Approve USDC for payment
 cast send $USDC_ADDRESS \
-  "approve(address,uint256)" \
-  $LINKPAY_ADDRESS \
-  1000000000 \
-  --private-key $PRIVATE_KEY \
-  --rpc-url $BASE_SEPOLIA_RPC_URL
+  "approve(address,uint256)" $LINKPAY_ADDRESS 1000000 \
+  --private-key $PRIVATE_KEY --rpc-url $BASE_SEPOLIA_RPC_URL
 
 # 5. Execute cross-chain payment (0.01 ETH for Wormhole fees)
 cast send $LINKPAY_ADDRESS \
-  "payEmployeeViaWormhole(uint256)" \
-  1 \
-  --value 0.01ether \
-  --private-key $PRIVATE_KEY \
-  --rpc-url $BASE_SEPOLIA_RPC_URL
+  "payEmployeeViaWormhole(uint256)" 1 --value 0.01ether \
+  --private-key $PRIVATE_KEY --rpc-url $BASE_SEPOLIA_RPC_URL
 ```
 
 **Track payment on WormholeScan**: https://wormholescan.io (wait 15-20 min for finality)
@@ -218,16 +202,7 @@ Located at: `/contracts/src/LinkPayWormhole.sol`
 
 ## Contract Addresses
 
-### Base Sepolia Testnet
-
-```solidity
-// Core Contracts
-USDC: 0x036CbD53842c5426634e7929541eC2318f3dCF7e
-Wormhole CircleIntegration: 0x2703483B1a5a7c577e8680de9Df8Be03c6f30e3c
-
-// LinkPayWormhole (To be deployed)
-LinkPayWormhole: [DEPLOYMENT_ADDRESS]
-```
+See the environment variables at the top of this document for current deployment addresses.
 
 ## Deployment Guide
 
@@ -275,11 +250,14 @@ LinkPayWormhole deployed to: 0x...
 ### Test 1: Register a Company
 
 ```javascript
-// Using ethers.js
-const linkPay = new ethers.Contract(LINKPAY_ADDRESS, ABI, signer);
+const LINKPAY_ADDRESS = process.env.LINKPAY_ADDRESS;
+const USDC_ADDRESS = process.env.USDC_ADDRESS;
 
-// Approve USDC for registration fee (10 USDC)
-await usdc.approve(linkPay.address, ethers.utils.parseUnits("10", 6));
+const linkPay = new ethers.Contract(LINKPAY_ADDRESS, ABI, signer);
+const usdc = new ethers.Contract(USDC_ADDRESS, USDC_ABI, signer);
+
+// Approve USDC for registration fee
+await usdc.approve(LINKPAY_ADDRESS, ethers.utils.parseUnits("10", 6));
 
 // Register company
 await linkPay.registerCompany("My Company");
@@ -288,12 +266,12 @@ await linkPay.registerCompany("My Company");
 ### Test 2: Add Cross-Chain Employee
 
 ```javascript
-// Add employee on Arbitrum Sepolia
+// Add employee on Arbitrum Sepolia (chain ID 10003)
 await linkPay.addEmployee(
-  "Alice",                           // Employee name
-  "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb", // Employee wallet
-  10003,                             // Wormhole Chain ID (Arbitrum Sepolia)
-  ethers.utils.parseUnits("1000", 6) // 1000 USDC salary
+  "Alice",
+  "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  10003, // Arbitrum Sepolia
+  ethers.utils.parseUnits("1000", 6)
 );
 ```
 
@@ -301,17 +279,17 @@ await linkPay.addEmployee(
 
 ```javascript
 // Approve USDC for payment
-await usdc.approve(linkPay.address, ethers.utils.parseUnits("1000", 6));
+await usdc.approve(LINKPAY_ADDRESS, ethers.utils.parseUnits("1000", 6));
 
-// Pay employee (requires ETH for Wormhole relayer fees)
+// Execute payment (0.01 ETH for Wormhole relayer fees)
 const tx = await linkPay.payEmployeeViaWormhole(1, {
-  value: ethers.utils.parseEther("0.01") // ~$0.50 in ETH for fees
+  value: ethers.utils.parseEther("0.01")
 });
 
 const receipt = await tx.wait();
-console.log("Transaction Hash:", receipt.transactionHash);
+console.log("TX Hash:", receipt.transactionHash);
 
-// Find Wormhole sequence in events
+// Get Wormhole sequence from events
 const event = receipt.events.find(e => e.event === "PaymentExecutedViaWormhole");
 console.log("Wormhole Sequence:", event.args.wormholeSequence);
 ```
@@ -419,21 +397,14 @@ const WORMHOLE_CHAINS = {
 
 ```typescript
 async function payEmployee(employeeId: number) {
-  const linkPay = new ethers.Contract(
-    LINKPAY_WORMHOLE_ADDRESS,
-    LinkPayWormholeABI,
-    signer
-  );
-
-  // Estimate relayer fee (typically 0.005-0.01 ETH on testnet)
-  const relayerFee = ethers.utils.parseEther("0.01");
+  const LINKPAY_ADDRESS = process.env.LINKPAY_ADDRESS;
+  const linkPay = new ethers.Contract(LINKPAY_ADDRESS, LinkPayWormholeABI, signer);
 
   const tx = await linkPay.payEmployeeViaWormhole(employeeId, {
-    value: relayerFee,
+    value: ethers.utils.parseEther("0.01") // Wormhole relayer fee
   });
 
-  const receipt = await tx.wait();
-  return receipt.transactionHash;
+  return (await tx.wait()).transactionHash;
 }
 ```
 

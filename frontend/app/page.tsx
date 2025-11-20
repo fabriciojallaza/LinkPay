@@ -478,15 +478,15 @@ export default function App() {
         return;
       }
 
-      // Map blockchain network to chain selector
+      // Map blockchain network to Wormhole chain ID
       const chainSelectors: Record<string, number> = {
-        'base': 0,
-        'arbitrum': 1,
-        'avalanche': 2,
-        'eth-sepolia': 3,
+        'base': 10004,        // Base Sepolia
+        'arbitrum': 10003,    // Arbitrum Sepolia
+        'avalanche': 6,       // Avalanche Fuji
+        'eth-sepolia': 10002, // Ethereum Sepolia
       };
 
-      const chainSelector = chainSelectors[paymentData.blockchainNetwork] || 0;
+      const chainSelector = chainSelectors[paymentData.blockchainNetwork] || 10004; // Default to Base Sepolia
 
       // Check USDC balance and allowance
       const balance = await web3.getUSDCBalance();

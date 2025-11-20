@@ -267,7 +267,8 @@ export async function getEmployee(employeeId: number): Promise<any> {
     companyId: employee[0].toNumber(),
     name: employee[1],
     wallet: employee[2],
-    destinationChainSelector: employee[3],
+    wormholeChainId: employee[3], // Wormhole chain ID (uint16)
+    destinationChainSelector: employee[3], // Keep for backward compatibility
     salary: ethers.utils.formatUnits(employee[4], 6),
     nextPayDate: employee[5].toNumber(),
     active: employee[6],

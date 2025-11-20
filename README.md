@@ -78,9 +78,9 @@ make info              # Show project info
 
 ## 🌐 Project Overview
 
-**LinkPay** is a decentralized, automated payroll platform that enables companies to pay employees in **USDC** across multiple blockchain networks, using **Chainlink services** for automation and cross-chain interoperability.
+**LinkPay** is a decentralized, automated payroll platform that enables companies to pay employees in **native USDC** across multiple blockchain networks, using **Wormhole CCTP** for cross-chain transfers and **Chainlink Automation** for scheduled execution.
 
-Traditional payroll systems are often **slow, expensive, and require manual processing**. LinkPay solves this by combining **Chainlink Automation** and **Chainlink CCIP** to create a **borderless, transparent, and self-operating payroll solution**.
+Traditional payroll systems are often **slow, expensive, and require manual processing**. LinkPay solves this by combining **Wormhole's burn-and-mint USDC transfers** and **Chainlink Automation** to create a **borderless, transparent, and self-operating payroll solution** with no wrapped tokens.
 
 ### LinkPay platform
 ![LinkPay platform](./images/platform.jpeg)
@@ -90,27 +90,31 @@ Traditional payroll systems are often **slow, expensive, and require manual proc
 
 1. **Company Registration:**
 
-   * A company pays **0.01 CCIP-BnM** to be registered.
-   * After registration, it can add employees with their **salary** and **destination chain**.
-   * This registration fee generates revenue for LinkPay.
+   * A company registers with a small USDC fee (currently set to 0 for testing).
+   * After registration, it can add employees with their **salary** and **destination chain** (using Wormhole chain IDs).
 
 2. **Automated Payroll Execution:**
 
    * **Chainlink Automation** periodically calls the `performUpkeep` function to execute payroll payments automatically.
+   * Payments are processed every 5 minutes (configurable interval).
 
-3. **Cross-Chain Payments:**
+3. **Cross-Chain Payments via Wormhole CCTP:**
 
-   * **Chainlink CCIP** transfers USDC across different blockchains directly to each employee’s wallet.
+   * **Same-chain payments** (e.g., Base → Base): Direct USDC transfer
+   * **Cross-chain payments**: Wormhole CCTP burns USDC on source chain, mints native USDC on destination chain
+   * No wrapped tokens – employees receive real, native USDC
+   * Automated relaying – no manual redemption needed
 
 4. **On-Chain State Updates:**
 
    * Each transaction updates the state on-chain — transferring funds, updating balances, and recording completed payments.
 
-**Important for Testing:**
-For tests, the **CCIP-BnM token** can be routed through Chainlink and bridged across different testnet chains. Fund your wallet with test tokens from:
-[https://docs.chain.link/ccip/test-tokens#evm-chains](https://docs.chain.link/ccip/test-tokens#evm-chains)
-
-**Note:** On mainnet, **CCIP-BnM** is replaced with **USDC** for actual payments.
+**Supported Networks (Wormhole Chain IDs):**
+- Base Sepolia: 10004
+- Arbitrum Sepolia: 10003
+- Avalanche Fuji: 6
+- Optimism Sepolia: 10005
+- Ethereum Sepolia: 10002
 
 ### Flow Diagram
 ![Flow Diagram](./images/diagrama.jpeg)
@@ -121,9 +125,10 @@ For tests, the **CCIP-BnM token** can be routed through Chainlink and bridged ac
 
 * **Company Management:** Register, update, and manage companies
 * **Employee Management:** Add employees with wallet, salary, and destination blockchain
-* **Automated Payments:** Scheduled salary payments using Chainlink Automation
-* **Cross-Chain Interoperability:** Secure transfers via Chainlink CCIP
-* **Real-Time Price Feeds:** Track token values with Chainlink oracles
+* **Automated Payments:** Scheduled salary payments using Chainlink Automation (5-minute intervals)
+* **Cross-Chain Native USDC:** Secure transfers via Wormhole CCTP (burn-and-mint mechanism)
+* **No Wrapped Tokens:** Employees receive real, native USDC on their destination chain
+* **Multi-Chain Support:** Base, Arbitrum, Avalanche, Optimism, and Ethereum Sepolia testnets
 * **Payment History:** Transparent record of all payroll transactions
 * **Wallet Integration:** MetaMask connection with network auto-switch
 
@@ -131,11 +136,13 @@ For tests, the **CCIP-BnM token** can be routed through Chainlink and bridged ac
 
 ## 🛠️ Tech Stack
 
-* **Smart Contracts:** Solidity
+* **Smart Contracts:** Solidity 0.8.17
 * **Frontend:** Next.js 16 + React 19, TypeScript, Tailwind CSS 4
 * **Blockchain Interaction:** Ethers.js v5
 * **UI & Components:** Radix UI, Lucide React, React Hook Form, Sonner, Recharts
-* **Oracles & Automation:** Chainlink Automation, Chainlink CCIP, Chainlink Price Feeds
+* **Cross-Chain Protocol:** Wormhole CCTP (Circle's Cross-Chain Transfer Protocol)
+* **Automation:** Chainlink Automation
+* **Development Tools:** Foundry (Forge, Cast, Anvil)
 
 ---
 
@@ -159,40 +166,50 @@ LinkPay/
 
 ### Company Registration
 
-1. Connect MetaMask wallet
-2. Pay **0.01 CCIP-BnM** for registration
-3. Add employees (name, wallet, destination chain, salary)
+1. Connect MetaMask wallet to Base Sepolia
+2. Register company (free for testing)
+3. Add employees (name, wallet, Wormhole chain ID, salary in USDC)
 
 ### Automated Payments
 
-* Chainlink Automation triggers payroll automatically
-* Cross-chain salaries sent via Chainlink CCIP
+* **Chainlink Automation** triggers payroll every 5 minutes automatically
+* **Same-chain payments** (Base → Base): Direct USDC transfer
+* **Cross-chain payments**: Wormhole CCTP burns and mints native USDC on destination chain
+* Requires 0.01 ETH per cross-chain payment for Wormhole relayer fees
 
 ### Payment History
 
 * Track all completed and scheduled payments
 * Transparent on-chain record with transaction hashes
+* Monitor cross-chain transfers on [WormholeScan](https://wormholescan.io)
 
 ---
 
 ## 🌐 Supported Networks
 
-| Selector | Network          |
-| -------- | ---------------- |
-| 0        | Base             |
-| 1        | Arbitrum         |
-| 2        | Avalanche        |
-| 3        | Ethereum Sepolia |
+| Wormhole Chain ID | Network          | Network ID | CCTP Support |
+|-------------------|------------------|------------|--------------|
+| 10004             | Base Sepolia     | 84532      | ✅            |
+| 10003             | Arbitrum Sepolia | 421614     | ✅            |
+| 6                 | Avalanche Fuji   | 43113      | ✅            |
+| 10005             | Optimism Sepolia | 11155420   | ✅            |
+| 10002             | Ethereum Sepolia | 11155111   | ✅            |
 
 ---
 
 ## 🎁 Sponsors / Integrations
 
-| Sponsor   | Service / Feature                                                           | File / Line Reference                                  |
-| --------- | --------------------------------------------------------------------------- | ------------------------------------------------------ |
-| Chainlink | Automation – triggers scheduled payments                                    | `/contracts/LinkPay.sol` – Lines 336 & 387             |
-| Chainlink | CCIP (Cross-Chain Interoperability Protocol) – secure cross-chain transfers | `/contracts/LinkPay.sol` – Lines 443–610               |
-| Chainlink | Price Feeds – Real-time token conversion rates                              | `frontend/components/ui/price-feed.tsx` – Lines 60–196 |
+| Sponsor   | Service / Feature                                                     | File / Line Reference                                           |
+| --------- | --------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Wormhole  | CCTP – Native USDC cross-chain transfers (burn-and-mint)             | `/contracts/src/LinkPayWormhole.sol` – Lines 526-582            |
+| Chainlink | Automation – Triggers scheduled payments automatically                | `/contracts/src/LinkPayWormhole.sol` – Lines 336-387            |
+| Chainlink | Price Feeds – Real-time token conversion rates (frontend)             | `frontend/components/ui/price-feed.tsx` – Lines 60–196          |
+
+### Additional Documentation
+
+- **Wormhole Integration Guide**: See [WORMHOLE_INTEGRATION.md](./WORMHOLE_INTEGRATION.md) for complete Wormhole CCTP setup and usage
+- **Scheduled Payments Fix**: See [SCHEDULED_PAYMENTS_FIX.md](./SCHEDULED_PAYMENTS_FIX.md) for troubleshooting automated payments
+- **Transaction Hash Guide**: See [GET_TX_HASH.md](./GET_TX_HASH.md) for testing cross-chain payments
 
 ---
 
