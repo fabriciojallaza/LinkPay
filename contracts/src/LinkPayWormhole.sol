@@ -181,7 +181,7 @@ contract LinkPayWormhole is AutomationCompatibleInterface {
         owner = msg.sender;
         feeWallet = _feeWallet;
         registrationFee = _registrationFee;
-        interval = 30 days; // Default monthly payroll
+        interval = 5 minutes; // Testing interval (use 30 days for production)
         wormholeCircleBridge = ICircleIntegration(_wormholeCircleBridge);
 
         // Initialize allowed Wormhole chains for CCTP
@@ -524,8 +524,61 @@ contract LinkPayWormhole is AutomationCompatibleInterface {
                 emit PaymentScheduled(_companyId, _employeeId, emp.wallet, 0, emp.wormholeChainId);
             }
         } else {
-            // Cross-chain payment - emit scheduled event (requires manual trigger with gas)
-            emit PaymentScheduled(_companyId, _employeeId, emp.wallet, emp.salary, emp.wormholeChainId);
+            // Cross-chain payment via Wormhole CCTP
+            // Note: This requires ETH for Wormhole relayer fees, which performUpkeep cannot provide
+            // For automated cross-chain payments, company must fund this contract with ETH
+            // Or use manual payEmployeeViaWormhole() with msg.value
+
+            uint256 contractBalance = address(this).balance;
+            if (contractBalance < 0.01 ether) {
+                // Not enough ETH for Wormhole fees - emit scheduled event
+                emit PaymentScheduled(_companyId, _employeeId, emp.wallet, emp.salary, emp.wormholeChainId);
+                return;
+            }
+
+            // Execute cross-chain payment
+            bool transferSuccess = usdc.transferFrom(companyOwner, address(this), emp.salary);
+            if (!transferSuccess) {
+                emit PaymentScheduled(_companyId, _employeeId, emp.wallet, emp.salary, emp.wormholeChainId);
+                return;
+            }
+
+            // Approve Wormhole CircleIntegration
+            usdc.approve(address(wormholeCircleBridge), emp.salary);
+
+            // Prepare transfer parameters
+            ICircleIntegration.TransferParameters memory params = ICircleIntegration.TransferParameters({
+                token: address(usdc),
+                amount: emp.salary,
+                targetChain: emp.wormholeChainId,
+                mintRecipient: bytes32(uint256(uint160(emp.wallet)))
+            });
+
+            // Encode employee data as payload
+            bytes memory payload = abi.encode(
+                _employeeId,
+                emp.name,
+                block.timestamp
+            );
+
+            // Execute cross-chain transfer via Wormhole CCTP
+            uint64 sequence = wormholeCircleBridge.transferTokensWithPayload{value: 0.01 ether}(
+                params,
+                0, // batchId
+                payload
+            );
+
+            // Update next payment date
+            emp.nextPayDate = block.timestamp + interval;
+
+            emit PaymentExecutedViaWormhole(
+                _companyId,
+                _employeeId,
+                emp.wallet,
+                emp.salary,
+                emp.wormholeChainId,
+                sequence
+            );
         }
     }
 

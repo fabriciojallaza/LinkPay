@@ -6,7 +6,7 @@
 
 **Smart Contracts:**
 - Chainlink CCIP Version: [0x291AB221FB0E8C8EEE246E9476Bb2E892D82DcaB](https://sepolia.basescan.org/address/0x291AB221FB0E8C8EEE246E9476Bb2E892D82DcaB#code) (Base Sepolia)
-- **Wormhole CCTP Version**: [0x4F295724B7C1BD45699Ca29939C5C99a937947a6](https://sepolia.basescan.org/address/0x4F295724B7C1BD45699Ca29939C5C99a937947a6#code) (Base Sepolia)
+- **Wormhole CCTP Version**: [0xe7335Ee6af0bE5288daeC898Cf74D51D3eE92A2e](https://sepolia.basescan.org/address/0xe7335Ee6af0bE5288daeC898Cf74D51D3eE92A2e#code) (Base Sepolia)
 
 **Slides / Presentation:** [https://gamma.app/docs/LinkPay-Secure-Payments-on-the-Blockchain-8ofb4o7ffjy3wmr?mode=doc](https://gamma.app/docs/LinkPay-Secure-Payments-on-the-Blockchain-8ofb4o7ffjy3wmr?mode=doc)
 

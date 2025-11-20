@@ -22,7 +22,7 @@ contract DeployLinkPayWormhole is Script {
     address constant WORMHOLE_CCTP_BASE_SEPOLIA = 0x2703483B1a5a7c577e8680de9Df8Be03c6f30e3c; // Wormhole CircleIntegration
 
     // Configuration
-    uint256 constant REGISTRATION_FEE = 10_000_000; // 10 USDC (6 decimals)
+    uint256 constant REGISTRATION_FEE = 0; // No registration fee for testing (was 10 USDC for Chainlink LINK fees)
 
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
