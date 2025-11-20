@@ -208,8 +208,6 @@ LinkPay/
 ### Additional Documentation
 
 - **Wormhole Integration Guide**: See [WORMHOLE_INTEGRATION.md](./WORMHOLE_INTEGRATION.md) for complete Wormhole CCTP setup and usage
-- **Scheduled Payments Fix**: See [SCHEDULED_PAYMENTS_FIX.md](./SCHEDULED_PAYMENTS_FIX.md) for troubleshooting automated payments
-- **Transaction Hash Guide**: See [GET_TX_HASH.md](./GET_TX_HASH.md) for testing cross-chain payments
 
 ---
 
