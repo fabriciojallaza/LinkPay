@@ -1,12 +1,78 @@
 # LinkPay – Automated Cross-Chain Payroll System
 
+> **Native USDC cross-chain payments powered by Wormhole CCTP and Chainlink**
+
 **dApp:** [https://linkpay-seven.vercel.app/](https://linkpay-seven.vercel.app/)
 
-**Smart Contract (Base Sepolia):** [0x291AB221FB0E8C8EEE246E9476Bb2E892D82DcaB](https://sepolia.basescan.org/address/0x291AB221FB0E8C8EEE246E9476Bb2E892D82DcaB#code)
-
-**GitHub Repository:** [https://github.com/ManuelElias1999/LinkPay](https://github.com/ManuelElias1999/LinkPay)
+**Smart Contracts:**
+- Chainlink CCIP Version: [0x291AB221FB0E8C8EEE246E9476Bb2E892D82DcaB](https://sepolia.basescan.org/address/0x291AB221FB0E8C8EEE246E9476Bb2E892D82DcaB#code) (Base Sepolia)
+- **Wormhole CCTP Version**: [0x4F295724B7C1BD45699Ca29939C5C99a937947a6](https://sepolia.basescan.org/address/0x4F295724B7C1BD45699Ca29939C5C99a937947a6#code) (Base Sepolia)
 
 **Slides / Presentation:** [https://gamma.app/docs/LinkPay-Secure-Payments-on-the-Blockchain-8ofb4o7ffjy3wmr?mode=doc](https://gamma.app/docs/LinkPay-Secure-Payments-on-the-Blockchain-8ofb4o7ffjy3wmr?mode=doc)
+
+---
+
+## 🚀 Quick Start
+
+### Installation with Makefile
+
+```bash
+# Clone the repository
+git clone https://github.com/fabriciojallaza/LinkPay
+cd LinkPay
+
+# Install all dependencies (contracts + frontend)
+make install
+
+# Build everything
+make build
+
+# Or run complete setup
+make setup
+```
+
+### Manual Installation
+
+```bash
+# Install contract dependencies
+cd contracts
+forge install OpenZeppelin/openzeppelin-contracts --no-git
+forge install foundry-rs/forge-std --no-git
+forge build
+
+# Install frontend dependencies
+cd ../frontend/frontend
+npm install
+npm run dev
+```
+
+### Deploy Contracts
+
+```bash
+# Create .env file in contracts/
+cd contracts
+cp .env.example .env
+# Add your PRIVATE_KEY, BASE_SEPOLIA_RPC_URL, BASESCAN_API_KEY
+
+# Deploy LinkPayWormhole to Base Sepolia
+make deploy-sepolia
+
+# Or from root:
+make deploy-contracts
+```
+
+### Available Make Commands
+
+```bash
+make help              # Show all available commands
+make install           # Install all dependencies
+make build             # Build contracts and frontend
+make test-contracts    # Run contract tests
+make deploy-contracts  # Deploy to Base Sepolia
+make frontend-dev      # Start frontend dev server
+make clean             # Clean build artifacts
+make info              # Show project info
+```
 
 ---
 

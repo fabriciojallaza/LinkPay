@@ -13,5 +13,9 @@ docs/
 # Dotenv file
 .env
 
+# Dependencies (will be installed via Makefile)
+lib/*
+!lib/.gitkeep
+
 .idea
 CLAUDE.md
