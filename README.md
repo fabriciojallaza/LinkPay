@@ -203,7 +203,6 @@ LinkPay/
 | --------- | --------------------------------------------------------------------- | --------------------------------------------------------------- |
 | Wormhole  | CCTP – Native USDC cross-chain transfers (burn-and-mint)             | `/contracts/src/LinkPayWormhole.sol` – Lines 526-582            |
 | Chainlink | Automation – Triggers scheduled payments automatically                | `/contracts/src/LinkPayWormhole.sol` – Lines 336-387            |
-| Chainlink | Price Feeds – Real-time token conversion rates (frontend)             | `frontend/components/ui/price-feed.tsx` – Lines 60–196          |
 
 ### Additional Documentation
 
