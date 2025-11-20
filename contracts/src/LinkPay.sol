@@ -14,9 +14,9 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
  *
  * - The contract allows companies to register, manage employees, and schedule or automate salary payments on multiple chains.
  * - Chainlink Automation is used to automatically check if salary payouts are due and execute payments when needed, eliminating manual intervention.
- *      - Main Automation logic can be found around lines 322 (function checkUpkeep) and 373 (function performUpkeep).
+ * - Main Automation logic can be found around lines 322 (function checkUpkeep) and 373 (function performUpkeep).
  * - Chainlink CCIP (Cross-Chain Interoperability Protocol) enables secure, automated cross-chain token transfers for employee payments to other chains.
- *      - Main CCIP logic is implemented around lines 429 (transferTokensPayLINK, transferTokensPayNative) to 596.
+ * - Main CCIP logic is implemented around lines 429 (transferTokensPayLINK, transferTokensPayNative) to 596.
 **/
 
 /// ---------------------------------------------------------------
@@ -600,9 +600,9 @@ contract PayrollManager is AutomationCompatibleInterface {
             data: "",
             tokenAmounts: tokenAmounts,
             extraArgs: Client._argsToBytes(
-                Client.GenericExtraArgsV2({
-                    gasLimit: 0,
-                    allowOutOfOrderExecution: true
+                // CORREGIDO AQUI: V1 EN LUGAR DE V2 PARA SCROLL SEPOLIA
+                Client.EVMExtraArgsV1({
+                    gasLimit: 0
                 })
             ),
             feeToken: _feeTokenAddress
@@ -610,7 +610,7 @@ contract PayrollManager is AutomationCompatibleInterface {
     }
 
     /// ---------------------------------------------------------------
-    ///                      WITHDRAWALS
+    ///                       WITHDRAWALS
     /// ---------------------------------------------------------------
 
     /// @notice Allows the contract to receive Ether
