@@ -8,7 +8,7 @@
 - Chainlink CCIP Version: [0x291AB221FB0E8C8EEE246E9476Bb2E892D82DcaB](https://sepolia.basescan.org/address/0x291AB221FB0E8C8EEE246E9476Bb2E892D82DcaB#code) (Base Sepolia)
 - **Wormhole CCTP Version**: [0xe7335Ee6af0bE5288daeC898Cf74D51D3eE92A2e](https://sepolia.basescan.org/address/0xe7335Ee6af0bE5288daeC898Cf74D51D3eE92A2e#code) (Base Sepolia)
 
-**Slides / Presentation:** [https://gamma.app/docs/LinkPay-Secure-Payments-on-the-Blockchain-8ofb4o7ffjy3wmr?mode=doc](https://gamma.app/docs/LinkPay-Secure-Payments-on-the-Blockchain-8ofb4o7ffjy3wmr?mode=doc)
+**Slides / Presentation:** [https://gamma.app/docs/Copy-of-LinkPay-Secure-Payments-on-the-Blockchain-bps6l3xgoqlt8f8](https://gamma.app/docs/LinkPay-Secure-Payments-on-the-Blockchain-8ofb4o7ffjy3wmr?mode=doc)
 
 ---
 
@@ -226,20 +226,3 @@ Open an issue in the GitHub repository or contact the development team for assis
 ---
 
 **Built with ❤️ for decentralized, cross-chain payroll management.**
-
-## 🖼️ Screenshots
-
-### Chainlink Automation
-![Chainlink Automation](./images/Automation_LinkPay.png)
-
-### Payment in Base
-![Payment in Base](./images/Base.png)
-
-### Payment in Arbitrum
-![Payment in Arbitrum](./images/CCIP_Arbitrum.png)
-
-### Payment in Avalanche
-![Payment in Avalanche](./images/CCIP_Avalanche.png)
-
-### Payment in Ethereum
-![Payment in Ethereum](./images/CCIP_Ethereum.png)
